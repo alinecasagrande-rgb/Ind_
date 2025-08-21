@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Indicadores de RH</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f5f9; /* Light Blue background */
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 40vh;
+            max-height: 400px;
+        }
+        .nav-link {
+            transition: all 0.2s ease-in-out;
+        }
+        .nav-link.active {
+            background-color: #e0e7ff; /* Subtle accent for active link */
+            color: #1e3a8a;
+            font-weight: 600;
+        }
+        .kpi-card {
+            background-color: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+        }
+    </style>
+</head>
+<body class="flex h-screen">
+
+    <aside class="w-64 bg-white text-gray-700 p-6 flex-shrink-0 border-r border-gray-200">
+        <div class="flex items-center mb-10">
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABDCAMAAADp+P4yAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAPUExURQAAAB7w/x3v/xzv/x7w/7XBJ2EAAAAFdFJOUwAABxkeII9P6AAAAAlwSFlzAAAOwgAADsIBFShKgAAAA+pJREFUaEPtmknygyAQRoWlFOr9n/b+ahEXyEA3C5tNeefCDPAlkl1/GgAAAAAAAAAAAAAAAAAAAAAAPsHW2/1A2u+fj8d5P56fL/P5/C+0t7Tw7/P57Ew2m990S+sOYL/P5+Nx0FmBw7Ite5J0k2Y73G+xw2f354fRcrfL7Xa7JEmSpmkaYwx47e0A3j8e/3k8n0+T6XReZ5qmYYwxxgA2w3/SNA3DMAzDMMY2VRs2f2U4zhvKsoxSikgpJWOMMYAxBjbGKHlZlpRSyrIsxhgY478A5/l8/iilGGOMMYB/BZCkKaWU8jwf83neZxlje2OStk3bGAOw7f/SNE2S5Jy1aZq2bUgp5TlPCQna5nMsy7IsxpgxxiRJeZ6maRzHtm0A/gVMU8sYQynFGAOwVcqylFKaTCa8M28/s4wxkFLKsiymFFJKYYwxxgDGFnAsy0mScB5mR5IkxhhSSrIsA7gKOKWUJEl5nlNKYYwxxs4OAFJKxxhjAOP/CkBKKaUxxsYYY4xZlwHSNE2SZFmWKSUxxgD+5wGcSikxxhi9/g8/9wGcUsoxxl5eWVZljH1e1/X1el1V1bIsA7gKONcwxkBKKcYY27ZtGAZwV/g2AONZlmWMQRhjCO/5B/yvARhjjDFeDMMYQ3ieg47jGAZwW/gXA1JKxhhV1Xmeow37/5jnezgcZhhjCO/zP/i/BjDGGCOs67pSyrIsxhgYYyCltG1jjAHs/C/4TwNYlpVt25BS6ro+SRIYYwDAuK7rOI4kSbIsA3gVcF0AxhgYY5BSYozxPM8YAxzH9j8GwBgjSRLGGNM0x3F+v1/XdQDAuK7rOI7neZIkAfgKON8AxpgxxgCGMcbzeRzHtm0YBhj/rwEcxxhjZFlWlWWMMWMMxhjbtmEYxpjAsixjeZ4kSbquA3gVcF4AjDGMMQYwjDEMw3meKaWUUgDAuCzLsixSSmOMsSzLsixjzGEYxrZtGAZw1/i3AYwxkWVZlmVd15FS6rq+rut5ngDAuCzLsixSSqSU+v1+VdXGGFJKtm2MMcbzPMMwwDvgfwxgjFJKxhgYY7qux8MxxgA2bZqmMcaUUgDAuCzLsixKKTdtn84xjDEYY7IsYxiGtm0YBnDX+BcDGCOslLIsK6WkaTpJEgDAuK7rOI4kSbIsK6WUUqqqxhhSymVZlmEY27ZJkoR5ngFcAxxjjLHtn5RSjDHbtgEcxwBgGGPsGGPbNiElPM/D4TAYYwCAMcYxxhjjGGP/LwYAxhgYYwDAuCzLAgDAuCzLMsYYxhgYYzAMAOD/LwAAAAAAAAAAAAAAAAAAAAAA/Ev/ABSp1sZfRjGgAAAAAElFTUTSuQmCC" alt="Logo da Empresa" class="h-10 w-auto mr-3">
+            <h1 class="text-xl font-bold text-gray-800">Indicadores RH</h1>
+        </div>
+        <nav class="flex flex-col space-y-2">
+            <a href="#" id="nav-visao-geral" class="nav-link active px-4 py-2 rounded-lg hover:bg-blue-50">Visão Geral</a>
+            <a href="#" id="nav-colaboradores" class="nav-link px-4 py-2 rounded-lg hover:bg-blue-50">Colaboradores</a>
+            <a href="#" id="nav-movimentacao" class="nav-link px-4 py-2 rounded-lg hover:bg-blue-50">Movimentação</a>
+            <a href="#" id="nav-detalhes" class="nav-link px-4 py-2 rounded-lg hover:bg-blue-50">Detalhes por Est.</a>
+        </nav>
+    </aside>
+
+    <main class="flex-1 p-6 md:p-10 overflow-y-auto">
+        <div id="content-visao-geral" class="content-section">
+            <h2 class="text-3xl font-bold text-gray-800 mb-2">Visão Geral</h2>
+            <p class="text-gray-600 mb-8">Resumo dos indicadores de RH para Julho de 2025.</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="kpi-card"><h3 class="text-gray-500 font-medium">Total de Colaboradores</h3><p id="kpi-total-colaboradores" class="text-4xl font-bold text-blue-900 mt-2">0</p></div>
+                <div class="kpi-card"><h3 class="text-gray-500 font-medium">Total de Admissões</h3><p id="kpi-total-admissoes" class="text-4xl font-bold text-blue-900 mt-2">0</p></div>
+                <div class="kpi-card"><h3 class="text-gray-500 font-medium">Total de Desligamentos</h3><p id="kpi-total-desligamentos" class="text-4xl font-bold text-blue-900 mt-2">0</p></div>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-8">
+                <div class="lg:col-span-3 bg-white p-6 rounded-lg shadow-sm border border-gray-200"><h3 class="text-xl font-semibold text-gray-800 mb-4">Colaboradores por Estabelecimento (Jul/2025)</h3><div class="chart-container"><canvas id="colaboradoresEstabelecimentoChart"></canvas></div></div>
+                <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-sm border border-gray-200"><h3 class="text-xl font-semibold text-gray-800 mb-4">Distribuição por Gênero</h3><div class="chart-container"><canvas id="genderDistributionChart"></canvas></div></div>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-8">
+                <div class="lg:col-span-3 bg-white p-6 rounded-lg shadow-sm border border-gray-200"><h3 class="text-xl font-semibold text-gray-800 mb-4">Admissões vs. Desligamentos</h3><div class="chart-container"><canvas id="admissoesDesligamentosChart"></canvas></div></div>
+                <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-sm border border-gray-200"><h3 class="text-xl font-semibold text-gray-800 mb-4">Colaboradores por Faixa Etária</h3><div class="chart-container"><canvas id="ageDistributionChart"></canvas></div></div>
+            </div>
+        </div>
+        <div id="content-colaboradores" class="content-section hidden">
+            <h2 class="text-3xl font-bold text-gray-800 mb-2">Colaboradores</h2>
+            <p class="text-gray-600 mb-8">Análise da evolução e composição do quadro de colaboradores.</p>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200"><h3 class="text-xl font-semibold text-gray-800 mb-4">Evolução do Total de Colaboradores</h3><div class="chart-container"><canvas id="totalColaboradoresChart"></canvas></div></div>
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200"><h3 class="text-xl font-semibold text-gray-800 mb-4">Evolução Mensal por Estabelecimento</h3><div class="overflow-auto max-h-96"><table id="colaboradoresEstabelecimentoTable"></table></div></div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="kpi-card text-center"><h3 class="text-gray-500 font-medium">Total de Colaboradores PCD (Jul/2025)</h3><p id="kpi-total-pcd" class="text-5xl font-bold text-blue-900 mt-4">0</p></div>
+                <div class="kpi-card text-center"><h3 class="text-gray-500 font-medium">Total de Aprendizes (Jul/2025)</h3><p id="kpi-total-aprendizes" class="text-5xl font-bold text-blue-900 mt-4">0</p></div>
+            </div>
+        </div>
+        <div id="content-movimentacao" class="content-section hidden">
+            <h2 class="text-3xl font-bold text-gray-800 mb-2">Movimentação</h2>
+            <p class="text-gray-600 mb-8">Acompanhamento das admissões e desligamentos ao longo do semestre.</p>
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200 mb-8"><h3 class="text-xl font-semibold text-gray-800 mb-4">Evolução de Admissões</h3><div class="chart-container"><canvas id="admissoesChart"></canvas></div></div>
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200"><h3 class="text-xl font-semibold text-gray-800 mb-4">Evolução de Desligamentos</h3><div class="chart-container"><canvas id="desligamentosChart"></canvas></div></div>
+        </div>
+        
+        <div id="content-detalhes" class="content-section hidden">
+            <h2 class="text-3xl font-bold text-gray-800 mb-2">Detalhes por Estabelecimento</h2>
+            <p class="text-gray-600 mb-8">Evolução mensal de todos os indicadores.</p>
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200"><h3 class="text-xl font-semibold text-gray-800 mb-4">Tabela Geral de Evolução</h3><div class="overflow-x-auto"><table id="evolutionTable"></table></div></div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            
+            const data = {
+                "labels": ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho"],
+                "colaboradores": {
+                    "estabelecimentos": ["101", "102", "103", "104", "105", "106", "108"],
+                    "dados": [
+                        [192, 191, 189, 192, 198, 198, 200],
+                        [128, 128, 127, 131, 140, 144, 154],
+                        [134, 139, 141, 144, 139, 144, 159],
+                        [38, 40, 40, 40, 41, 40, 40],
+                        [25, 26, 24, 25, 29, 28, 29],
+                        [23, 24, 26, 28, 28, 28, 31],
+                        [0, 0, 0, 0, 0, 1, 0]
+                    ],
+                    "totais": [540, 548, 547, 560, 575, 583, 613]
+                },
+                "admitidos": {
+                    "dados": [
+                        [2, 2, 3, 1, 7, 9, 4],
+                        [2, 4, 3, 3, 6, 13, 18],
+                        [6, 7, 9, 10, 11, 9, 24],
+                        [0, 2, 1, 3, 1, 2, 1],
+                        [0, 0, 1, 3, 1, 4, 4],
+                        [0, 1, 2, 1, 2, 2, 6],
+                        [0, 0, 0, 0, 0, 0, 0]
+                    ],
+                    "totais": [10, 16, 19, 21, 28, 39, 57]
+                },
+                "desligados": {
+                    "dados": [
+                        [8, 8, 8, 8, 8, 8, 18],
+                        [2, 2, 2, 2, 3, 3, 5],
+                        [4, 4, 4, 4, 4, 4, 5],
+                        [3, 3, 3, 3, 3, 2, 3],
+                        [5, 6, 5, 5, 4, 3, 6],
+                        [1, 1, 1, 1, 1, 1, 2],
+                        [0, 0, 0, 0, 0, 0, 0]
+                    ],
+                    "totais": [23, 24, 23, 23, 23, 21, 39]
+                },
+                "aprendizes": {
+                    "dados": [
+                        [4, 4, 4, 5, 9, 8, 7],
+                        [8, 6, 6, 7, 7, 6, 8],
+                        [7, 7, 7, 8, 7, 6, 8],
+                        [2, 2, 2, 2, 2, 2, 2],
+                        [2, 2, 2, 2, 2, 2, 2],
+                        [2, 2, 2, 2, 2, 2, 2],
+                        [0, 0, 0, 0, 0, 0, 0]
+                    ],
+                    "totais": [25, 23, 23, 26, 29, 26, 29]
+                },
+                "pcd": {
+                    "dados": [
+                        [8, 8, 8, 8, 8, 8, 7],
+                        [2, 2, 2, 2, 3, 3, 3],
+                        [4, 4, 4, 4, 4, 4, 4],
+                        [3, 3, 3, 3, 3, 2, 2],
+                        [5, 6, 5, 5, 4, 3, 5],
+                        [1, 1, 1, 1, 1, 1, 2],
+                        [0, 0, 0, 0, 0, 0, 0]
+                    ],
+                    "totais": [23, 24, 23, 23, 23, 21, 23]
+                },
+                "demographics": {
+                    "gender": { "labels": ["Masculino", "Feminino"], "data": [326, 287] },
+                    "ageRange": {
+                        "labels": ["Menores de 18 anos", "De 18 a 30 anos", "De 31 a 40 anos", "De 41 a 50 anos", "Maiores de 50 anos"],
+                        "data": [4, 284, 184, 105, 36]
+                    }
+                }
+            };
+
+            const chartColors = {
+                primary: '#1e3a8a', primaryLight: 'rgba(30, 58, 138, 0.2)',
+                secondary: '#60a5fa', secondaryLight: 'rgba(96, 165, 250, 0.2)',
+            };
+            const chartOptions = {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { position: 'top' }, tooltip: { backgroundColor: '#fff', titleColor: '#1f2937', bodyColor: '#4b5563', borderColor: '#e5e7eb', borderWidth: 1, } },
+                scales: { x: { grid: { display: false } }, y: { beginAtZero: true, grid: { color: '#f9fafb' } } }
+            };
+
+            function initializeDashboard(data) {
+                function initKPIs() {
+                    const ultimoIndice = data.labels.length - 1;
+                    document.getElementById('kpi-total-colaboradores').textContent = data.colaboradores.totais[ultimoIndice];
+                    document.getElementById('kpi-total-admissoes').textContent = data.admitidos.totais[ultimoIndice];
+                    document.getElementById('kpi-total-desligamentos').textContent = data.desligados.totais[ultimoIndice];
+                    document.getElementById('kpi-total-pcd').textContent = data.pcd.totais[ultimoIndice];
+                    document.getElementById('kpi-total-aprendizes').textContent = data.aprendizes.totais[ultimoIndice];
+                }
+                function createSimpleLineChart(canvasId, datasetLabel, datasetData, color) {
+                     const ctx = document.getElementById(canvasId).getContext('2d');
+                     new Chart(ctx, { type: 'line', data: { labels: data.labels, datasets: [{ label: datasetLabel, data: datasetData, borderColor: color.primary, backgroundColor: color.primaryLight, fill: true, tension: 0.3 }] }, options: chartOptions });
+                }
+                function createSimpleBarChart(canvasId, datasetLabel, datasetData, color) {
+                    const ctx = document.getElementById(canvasId).getContext('2d');
+                     new Chart(ctx, { type: 'bar', data: { labels: data.labels, datasets: [{ label: datasetLabel, data: datasetData, backgroundColor: color.primaryLight, borderColor: color.primary, borderWidth: 1 }] }, options: chartOptions });
+                }
+                function createAdmissoesDesligamentosChart() {
+                    const ctx = document.getElementById('admissoesDesligamentosChart').getContext('2d');
+                    new Chart(ctx, { type: 'line', data: { labels: data.labels, datasets: [{ label: 'Admissões', data: data.admitidos.totais, borderColor: chartColors.primary, fill: false, tension: 0.3 }, { label: 'Desligamentos', data: data.desligados.totais, borderColor: chartColors.secondary, fill: false, tension: 0.3 }] }, options: chartOptions });
+                }
+                function createColaboradoresEstabelecimentoChart() {
+                    const ultimoIndice = data.labels.length - 1;
+                    const dadosUltimoMes = data.colaboradores.dados.map(d => d[ultimoIndice]);
+                    const ctx = document.getElementById('colaboradoresEstabelecimentoChart').getContext('2d');
+                    new Chart(ctx, { type: 'bar', data: { labels: data.colaboradores.estabelecimentos, datasets: [{ label: `Colaboradores em ${data.labels[ultimoIndice]}`, data: dadosUltimoMes, backgroundColor: chartColors.primaryLight, borderColor: chartColors.primary, borderWidth: 1 }] }, options: { ...chartOptions, plugins: { legend: { display: false } } } });
+                }
+                function createGenderDistributionChart() {
+                    const ctx = document.getElementById('genderDistributionChart').getContext('2d');
+                    new Chart(ctx, { type: 'doughnut', data: { labels: data.demographics.gender.labels, datasets: [{ label: 'Gênero', data: data.demographics.gender.data, backgroundColor: [chartColors.primary, chartColors.secondary], hoverOffset: 4 }] }, options: { ...chartOptions, scales: { x: { display: false }, y: { display: false } } } });
+                }
+                function createAgeDistributionChart() {
+                    const ctx = document.getElementById('ageDistributionChart').getContext('2d');
+                    new Chart(ctx, { type: 'bar', data: { labels: data.demographics.ageRange.labels, datasets: [{ label: 'Nº de Colaboradores', data: data.demographics.ageRange.data, backgroundColor: chartColors.secondaryLight, borderColor: chartColors.secondary, borderWidth: 1 }] }, options: { ...chartOptions, plugins: { legend: { display: false } } } });
+                }
+                function createColaboradoresEstabelecimentoTable() {
+                    const table = document.getElementById('colaboradoresEstabelecimentoTable');
+                    const thead = document.createElement('thead');
+                    const tbody = document.createElement('tbody');
+                    let headerHTML = `<tr class="bg-gray-100 text-gray-800 uppercase text-xs"><th scope="col" class="px-4 py-3">Estab.</th>`;
+                    data.labels.forEach(l => { headerHTML += `<th scope="col" class="px-4 py-3 text-center">${l.substring(0,3)}</th>`; });
+                    headerHTML += `</tr>`;
+                    thead.innerHTML = headerHTML;
+                    let bodyHTML = '';
+                    data.colaboradores.estabelecimentos.forEach((est, index) => { bodyHTML += `<tr class="border-b border-gray-200/50 hover:bg-gray-50"><td class="px-4 py-2 font-medium text-gray-900">${est}</td>`; data.colaboradores.dados[index].forEach(val => { bodyHTML += `<td class="px-4 py-2 text-center">${val}</td>`; }); bodyHTML += `</tr>`; });
+                    bodyHTML += `<tr class="bg-gray-100 font-bold text-gray-900"><td class="px-4 py-2">Total</td>`; data.colaboradores.totais.forEach(total => { bodyHTML += `<td class="px-4 py-2 text-center">${total}</td>`; }); bodyHTML += `</tr>`;
+                    tbody.innerHTML = bodyHTML;
+                    table.innerHTML = '';
+                    table.append(thead, tbody);
+                }
+                function createEvolutionTable() {
+                    const table = document.getElementById('evolutionTable');
+                    const thead = document.createElement('thead');
+                    const tbody = document.createElement('tbody');
+                    let headerHTML = `<tr class="bg-gray-100 text-gray-800 uppercase text-xs"><th class="px-4 py-3">Métrica</th>`;
+                    data.labels.forEach(l => { headerHTML += `<th class="px-4 py-3 text-center">${l.substring(0,3)}</th>`; });
+                    headerHTML += `</tr>`;
+                    thead.innerHTML = headerHTML;
+                    let bodyHTML = '';
+                    const allData = [
+                        { title: 'COLABORADORES', metric: 'colaboradores' }, { title: 'ADMISSÕES', metric: 'admitidos' }, { title: 'DESLIGAMENTOS', metric: 'desligados' }, { title: 'APRENDIZES', metric: 'aprendizes' }, { title: 'PCD', metric: 'pcd' }
+                    ];
+                    allData.forEach(item => {
+                        const metricData = data[item.metric];
+                        const estabelecimentos = data.colaboradores.estabelecimentos;
+                        const dados = metricData.dados;
+                        const totais = metricData.totais;
+                        bodyHTML += `<tr class="bg-gray-200 font-bold"><td colspan="${data.labels.length + 1}" class="px-4 py-2 text-gray-900">${item.title}</td></tr>`;
+                        estabelecimentos.forEach((est, i) => { const rowData = dados[i] || []; bodyHTML += `<tr class="border-b border-gray-200 hover:bg-gray-50"><td class="px-4 py-2 font-medium text-gray-900">Est. ${est}</td>`; for(let j=0; j < data.labels.length; j++){ bodyHTML += `<td class="px-4 py-2 text-center">${rowData[j] || 0}</td>`; } bodyHTML += `</tr>`; });
+                        bodyHTML += `<tr class="bg-gray-100 font-semibold"><td class="px-4 py-2">Total ${item.title.split(' ')[0]}</td>`; totais.forEach(v => { bodyHTML += `<td class="px-4 py-2 text-center">${v || 0}</td>`; }); bodyHTML += `</tr>`;
+                    });
+                    tbody.innerHTML = bodyHTML;
+                    table.innerHTML = '';
+                    table.append(thead, tbody);
+                }
+                
+                const navLinks = document.querySelectorAll('.nav-link');
+                const contentSections = document.querySelectorAll('.content-section');
+                navLinks.forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        navLinks.forEach(l => l.classList.remove('active'));
+                        link.classList.add('active');
+                        const targetId = 'content-' + link.id.split('-')[1];
+                        contentSections.forEach(section => { section.id === targetId ? section.classList.remove('hidden') : section.classList.add('hidden'); });
+                    });
+                });
+
+                initKPIs();
+                createAdmissoesDesligamentosChart();
+                createGenderDistributionChart();
+                createAgeDistributionChart();
+                createColaboradoresEstabelecimentoChart();
+                createSimpleLineChart('totalColaboradoresChart', 'Total de Colaboradores', data.colaboradores.totais, chartColors);
+                createColaboradoresEstabelecimentoTable();
+                createSimpleBarChart('admissoesChart', 'Admissões', data.admitidos.totais, {primary: chartColors.primary, primaryLight: chartColors.primaryLight});
+                createSimpleBarChart('desligamentosChart', 'Desligamentos', data.desligados.totais, {primary: chartColors.secondary, primaryLight: chartColors.secondaryLight});
+                createEvolutionTable();
+            }
+
+            initializeDashboard(data);
+        });
+    </script>
+</body>
+</html>
